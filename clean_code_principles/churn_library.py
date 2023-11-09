@@ -52,6 +52,7 @@ QUANT_COLUMNS = [
     'Avg_Utilization_Ratio'
 ]
 
+
 def import_data(data_path):
     """
     returns dataframe for the csv found at pth
@@ -196,8 +197,11 @@ def classification_report_image(
     plt.rc('figure', figsize=(5, 5))
     plt.text(0.01, 1.25, str('Random Forest Train'), {
         'fontsize': 10}, fontproperties='monospace')
-    plt.text(0.01, 0.05, str(classification_report(labels_test, labels_test_preds_rf)), {
-        'fontsize': 10}, fontproperties='monospace')
+    plt.text(
+        0.01, 0.05, str(
+            classification_report(
+                labels_test, labels_test_preds_rf)), {
+            'fontsize': 10}, fontproperties='monospace')
     plt.text(0.01, 0.6, str('Random Forest Test'), {
         'fontsize': 10}, fontproperties='monospace')
     plt.text(
@@ -222,8 +226,11 @@ def classification_report_image(
             'fontsize': 10}, fontproperties='monospace')
     plt.text(0.01, 0.6, str('Logistic Regression Test'), {
         'fontsize': 10}, fontproperties='monospace')
-    plt.text(0.01, 0.7, str(classification_report(labels_test, labels_test_preds_lr)), {
-        'fontsize': 10}, fontproperties='monospace')
+    plt.text(
+        0.01, 0.7, str(
+            classification_report(
+                labels_test, labels_test_preds_lr)), {
+            'fontsize': 10}, fontproperties='monospace')
     plt.axis('off')
     plt.savefig(os.path.join(RESULTS_PATH, "lr_classification_report.png"))
     logging.info(
@@ -365,7 +372,8 @@ if __name__ == '__main__':
     data = encoder_helper(data, CAT_COLUMNS, "Churn")
     logging.info("SUCCESS: encoder_helper")
     logging.info("START: perform_feature_engineering")
-    features_train, features_test, labels_train, labels_test = perform_feature_engineering(data)
+    features_train, features_test, labels_train, labels_test = perform_feature_engineering(
+        data)
     logging.info("SUCCESS: perform_feature_engineering")
     logging.info("START: train_models")
     train_models(features_train, features_test, labels_train, labels_test)
