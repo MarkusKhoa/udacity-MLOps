@@ -59,3 +59,9 @@ root - INFO - SUCCESS: encoder_helper
 root - INFO - START: perform_feature_engineering
 root - INFO - SUCCESS: perform_feature_engineering
 root - INFO - START: train_models
+root - INFO - SUCCESS: classification_report_image: random forest
+root - INFO - SUCCESS: classification_report_image: logistic regression
+root - INFO - SUCCESS: feature_importance_plot and saved feature report to  : ./images/results\cv_feature_importance.png
+root - INFO - SUCCESS: model_train: save lr roc curve
+root - INFO - SUCCESS: model_train: save lr and rf roc curves
+root - INFO - SUCCESS: train_models
