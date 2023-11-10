@@ -6,7 +6,7 @@
 This is the project to practice clean code in a Machine learning project.
 ## Files and data description
 Here is the files and folders structure built in this project
-
+`
 ├── README.md
 ├── churn_library.py
 ├── churn_script_logging_and_tests.py
@@ -31,7 +31,17 @@ Here is the files and folders structure built in this project
 │   ├── logistic_model.pkl
 │   └── rfc_model.pkl
 └── requirements.txt
+`
+
 ## Running Files
+To install environment variables, run this command
 `pip install -r requirements.txt`
 
+Usage
 `python churn_library.py`
+
+There are two different ways to test the Python script
+ - Directly execute the script by using command (main() functon required)
+ `ipython churn_script_logging_and_tests.py`
+ - Using `pytest` command:
+ `pytest churn_script_logging_and_tests.py`
