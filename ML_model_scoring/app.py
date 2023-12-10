@@ -2,49 +2,74 @@ from flask import Flask, session, jsonify, request
 import pandas as pd
 import numpy as np
 import pickle
-import create_prediction_model
-import diagnosis 
-import predict_exited_from_saved_model
 import json
 import os
 
+from diagnostics import (
+    dataframe_summary,
+    execution_time,
+    missing_data,
+    outdated_packages_list
+)
+from scoring import score_model
+from config import get_config
 
-
-######################Set up variables for use in our script
 app = Flask(__name__)
 app.secret_key = '1652d576-484a-49fd-913a-6879acfa6ba4'
 
-with open('config.json','r') as f:
-    config = json.load(f) 
+CFG = get_config(production=True)
 
-dataset_csv_path = os.path.join(config['output_folder_path']) 
+input_folder_path = CFG['input_folder_path']
+output_folder_pathut = CFG['output_folder_path']
+prod_deployment_path = CFG['prod_deployment_path']
+test_data_csv_path = CFG['test_data_csv_path']
+lr_model_path = os.path.join(
+    os.getcwd(),
+    prod_deployment_path,
+    'trainedmodel.pkl')
+prediction_model = pickle.load(open(lr_model_path, 'rb'))
 
-prediction_model = None
+
+@app.route("/prediction", methods=['POST', 'OPTIONS'])
+def predict():
+    filename = request.args.get('inputdata')
+    test_file_path = os.path.join(os.getcwd(), filename)
+    if os.path.isfile(test_file_path) is False:
+        return f"{test_file_path} doesn't exist"
+
+    test_df = pd.read_csv(test_file_path)
+    test_df = test_df.drop(['corporation'], axis=1)
+    X = test_df.iloc[:, :-1]
+
+    pred = prediction_model.predict(X)
+    return str(pred), 200
 
 
-#######################Prediction Endpoint
-@app.route("/prediction", methods=['POST','OPTIONS'])
-def predict():        
-    #call the prediction function you created in Step 3
-    return #add return value for prediction outputs
+@app.route("/scoring", methods=['GET', 'OPTIONS'])
+def scoring():
+    test_data_csv = pd.read_csv(test_data_csv_path)
+    f1score = score_model(prod_deployment_path, test_data_csv)
+    return jsonify(f1score), 200
 
-#######################Scoring Endpoint
-@app.route("/scoring", methods=['GET','OPTIONS'])
-def stats():        
-    #check the score of the deployed model
-    return #add return value (a single F1 score number)
 
-#######################Summary Statistics Endpoint
-@app.route("/summarystats", methods=['GET','OPTIONS'])
-def stats():        
-    #check means, medians, and modes for each column
-    return #return a list of all calculated summary statistics
+@app.route("/summarystats", methods=['GET', 'OPTIONS'])
+def stats():
+    statistics = dataframe_summary(test_data_csv_path)
+    return jsonify(statistics), 200
 
-#######################Diagnostics Endpoint
-@app.route("/diagnostics", methods=['GET','OPTIONS'])
-def stats():        
-    #check timing and percent NA values
-    return #add return value for all diagnostics
 
-if __name__ == "__main__":    
-    app.run(host='0.0.0.0', port=8000, debug=True, threaded=True)
+@app.route("/diagnostics", methods=['GET', 'OPTIONS'])
+def diagnostics():
+    timing = execution_time(input_folder_path, prod_deployment_path)
+    missing = missing_data(test_data_csv_path)
+    dependencies = outdated_packages_list()
+    res = {
+        'timing': timing,
+        'missing_data': missing,
+        'dependency_check': dependencies,
+    }
+    return jsonify(res), 200
+
+
+if __name__ == "__main__":
+    app.run(host='0.0.0.0', port=5000, debug=True, threaded=True)

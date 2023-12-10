@@ -3,6 +3,7 @@ import pandas as pd
 import numpy as np
 import os
 import json
+import pathlib
 import glob
 from datetime import datetime
 from config import get_config
@@ -21,6 +22,8 @@ ingested_files_path = os.path.join(
     output_folder_path,
     'ingestedfiles.txt'
 )
+
+print(f"ingested_files_path: {ingested_files_path}")
 
 
 def merge_multiple_dataframe(
