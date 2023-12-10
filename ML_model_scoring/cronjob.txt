@@ -1,0 +1,1 @@
+*/10 * * * * D:/Python/udacity-MLOps/ML_model_scoring/fullprocess.py
