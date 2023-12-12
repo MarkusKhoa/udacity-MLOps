@@ -52,7 +52,7 @@ def merge_multiple_dataframe(
     df = pd.concat([pd.read_csv(f) for f in files_path], ignore_index=True)
     logger.info('Merged dataframe: {}'.format(df))
 
-    with open(ingested_files_path, 'w') as f:
+    with open(pathlib.Path(ingested_files_path), 'w') as f:
         for file in files_list:
             f.write('{}\n'.format(file))
 
